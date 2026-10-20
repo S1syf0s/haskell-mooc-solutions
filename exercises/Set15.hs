@@ -43,7 +43,7 @@ statements = todo
 -- (negate or double) and a number, as strings, compute the result.
 -- Return Nothing for an unknown operation or invalid number.
 --
--- Use Applicative operations, don't use pattern matching.
+-- Use Applicative operations, don't use pattern matching for Maybe.
 --
 -- Hint: remember the function readMaybe
 --
