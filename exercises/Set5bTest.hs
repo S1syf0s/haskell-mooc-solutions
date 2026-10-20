@@ -138,44 +138,26 @@ ex6_large = property $ do
   return $ conjoin [$(testing [|cull v input|]) (?==output)
                    ,$(testing [|cull v input2|]) (?==output)]
 
-orderedTree :: Int -> (Int,Int) -> Gen (Tree Int)
-orderedTree 0 _ = return Empty
-orderedTree depth (min,max)
-  | min<max = frequency [(1, return Empty)
-                        ,(4, do v <- choose (min,max-1)
-                                l <- orderedTree (depth-1) (min,v)
-                                r <- orderedTree (depth-1) (v+1,max)
-                                return $ Node v l r)]
-orderedTree _ _ = return Empty
+treeFromList :: [Int] -> Gen (Tree Int)
+treeFromList [] = return Empty
+treeFromList xs = do i <- choose (0,length xs -1)
+                     l <- treeFromList (take i xs)
+                     r <- treeFromList (drop (i+1) xs)
+                     return $ Node (xs!!i) l r
 
-try :: [Gen (Maybe a)] -> Gen (Maybe a)
-try [] = return $ Nothing
-try (g:gs) = do m <- g
-                if isJust m then return m else try gs
+orderedTree :: Int -> Gen (Tree Int)
+orderedTree n = vectorOf n (choose (0,100)) >>= treeFromList . sort . nub
+unorderedTree :: Int -> Gen (Tree Int)
+unorderedTree n = fmap nub (vectorOf n (choose (0,100))) `suchThat` (\xs -> sort xs /= xs) >>= treeFromList
 
-breakOrder :: Tree Int -> Gen (Maybe (Tree Int))
-breakOrder Empty = return Nothing
-breakOrder (Node v Empty Empty) = return Nothing
-breakOrder (Node v l r) = try [do ml <- breakOrder l
-                                  case ml of Nothing -> return Nothing
-                                             Just l' -> return $ Just $ Node v l' r
-                              ,do mr <- breakOrder r
-                                  case mr of Nothing -> return Nothing
-                                             Just r' -> return $ Just $ Node v l r'
-                              ,return (Just (Node v r l))]
-
-m_ex7 depth = forAllBlind (orderedTree depth (0,100)) $ \t ->
-  forAllBlind (breakOrder t) $ \b ->
-  conjoin [$(testing [|isOrdered t|]) (?==True)
-          ,isJust b ==> $(testing [|isOrdered (fromJust b)|]) (?==False)]
+m_ex7 siz = conjoin [forAllBlind (orderedTree siz) $ \t -> $(testing [|isOrdered t|]) (?==True)
+                    ,forAllBlind (unorderedTree siz) $ \t -> $(testing [|isOrdered t|]) (?==False)]
 
 ex7_small = conjoin [$(testing [|isOrdered (Empty::Tree Int)|]) (?==True)
                     ,forAllBlind (choose (0,10::Int)) $ \i -> $(testing [|isOrdered (Node i Empty Empty)|]) (?==True)
-                    ,m_ex7 2]
+                    ,m_ex7 2,m_ex7 3,m_ex7 4]
 
-ex7_large = conjoin [m_ex7 3
-                    ,m_ex7 4
-                    ,m_ex7 5]
+ex7_large = forAll (choose (4,10)) m_ex7
 
 
 pathAndTree :: (Eq a, Arbitrary a) => Int -> a -> Gen ([Step],Tree a)
