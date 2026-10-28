@@ -3,6 +3,7 @@ module Set2b where
 import Mooc.Todo
 
 -- Some imports you'll need. Don't add other imports :)
+
 import Data.List
 
 ------------------------------------------------------------------------------
@@ -16,7 +17,9 @@ import Data.List
 -- Hint! pattern matching is your friend.
 
 binomial :: Integer -> Integer -> Integer
-binomial = todo
+binomial n 0 = 1
+binomial 0 k = 0
+binomial n k = binomial (n - 1) k + binomial (n - 1) (k - 1)
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement the odd factorial function. Odd factorial is like
@@ -27,7 +30,10 @@ binomial = todo
 --   oddFactorial 6 ==> 5*3*1 ==> 15
 
 oddFactorial :: Integer -> Integer
-oddFactorial = todo
+oddFactorial 1 = 1
+oddFactorial n = if even n
+                    then oddFactorial (n - 1)
+                    else n * oddFactorial (n - 2)
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the Euclidean Algorithm for finding the greatest
@@ -59,7 +65,12 @@ oddFactorial = todo
 -- * https://en.wikipedia.org/wiki/Euclidean_algorithm
 
 myGcd :: Integer -> Integer -> Integer
-myGcd = todo
+myGcd a 0 = a
+myGcd 0 b = b
+myGcd a b = if a > b
+                then myGcd (a - b) b
+                else myGcd (b - a) a
+
 
 ------------------------------------------------------------------------------
 -- Ex 4: Implement the function leftpad which adds space characters

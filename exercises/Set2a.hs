@@ -173,5 +173,3 @@ addEithers (Right x) (Left y) = Left y
 addEithers (Left x) (Right y) = Left x
 addEithers (Left x) (Left y)  = Left x
 
-
-
