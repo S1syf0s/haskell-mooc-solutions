@@ -86,7 +86,9 @@ myGcd a b = if a > b
 -- * you can compute the length of a string with the length function
 
 leftpad :: String -> Int -> String
-leftpad = todo
+leftpad s i = if length s >= i
+                then s
+                else leftpad (" " ++ s) i
 
 ------------------------------------------------------------------------------
 -- Ex 5: let's make a countdown for a rocket! Given a number, you
@@ -101,8 +103,12 @@ leftpad = todo
 -- * you can use the show function to convert a number into a string
 -- * you'll probably need a recursive helper function
 
+helper :: Integer -> String
+helper 1 = "1..."
+helper x = show x ++ "... " ++ helper (x - 1)
+
 countdown :: Integer -> String
-countdown = todo
+countdown x = "Ready! " ++ helper x ++ " Liftoff!" 
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement the function smallestDivisor that returns the
@@ -119,8 +125,14 @@ countdown = todo
 --
 -- Hint: remember the mod function!
 
+testMod :: Integer -> Integer -> Integer
+testMod n d = if mod n d == 0
+              then d
+              else testMod n (d + 1)
+
 smallestDivisor :: Integer -> Integer
-smallestDivisor = todo
+smallestDivisor n = testMod n 2
+
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a function isPrime that checks if the given number
@@ -129,7 +141,11 @@ smallestDivisor = todo
 -- Ps. 0 and 1 are not prime numbers
 
 isPrime :: Integer -> Bool
-isPrime = todo
+isPrime 0 = False
+isPrime 1 = False
+isPrime n = if smallestDivisor n == n
+            then True
+            else False
 
 ------------------------------------------------------------------------------
 -- Ex 8: implement a function biggestPrimeAtMost that returns the
@@ -144,4 +160,15 @@ isPrime = todo
 --   biggestPrimeAtMost 10 ==> 7
 
 biggestPrimeAtMost :: Integer -> Integer
-biggestPrimeAtMost = todo
+biggestPrimeAtMost n = if isPrime n == True
+                       then n
+                       else biggestPrimeAtMost (n - 1)
+
+
+
+
+
+
+
+
+
