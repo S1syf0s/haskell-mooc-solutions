@@ -27,9 +27,11 @@ import Data.List
 --  maxBy length [1,2,3] [4,5]  ==>  [1,2,3]
 --  maxBy head   [1,2,3] [4,5]  ==>  [4,5]
 
-maxBy :: (a -> Int) -> a -> a -> a
-maxBy measure a b = todo
 
+maxBy :: (a -> Int) -> a -> a -> a
+maxBy measure a b = if measure a > measure b 
+                    then a
+                    else b
 ------------------------------------------------------------------------------
 -- Ex 2: implement the function mapMaybe that takes a function and a
 -- Maybe value. If the value is Nothing, it returns Nothing. If it is
@@ -40,7 +42,8 @@ maxBy measure a b = todo
 --   mapMaybe length (Just "abc") ==> Just 3
 
 mapMaybe :: (a -> b) -> Maybe a -> Maybe b
-mapMaybe f x = todo
+mapMaybe _ Nothing = Nothing
+mapMaybe f (Just s) = Just (f s)   
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function mapMaybe2 that works like mapMaybe
@@ -54,7 +57,9 @@ mapMaybe f x = todo
 --   mapMaybe2 div (Just 6) Nothing   ==>  Nothing
 
 mapMaybe2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
-mapMaybe2 f x y = todo
+mapMaybe2 f (Just x) (Just y) = Just (f x y)
+mapMaybe2 f _ Nothing = Nothing
+mapMaybe2 f Nothing _ = Nothing
 
 ------------------------------------------------------------------------------
 -- Ex 4: define the functions firstHalf and palindrome so that
@@ -76,9 +81,13 @@ mapMaybe2 f x y = todo
 palindromeHalfs :: [String] -> [String]
 palindromeHalfs xs = map firstHalf (filter palindrome xs)
 
-firstHalf = todo
+firstHalf :: String -> String 
+firstHalf s = take (div (length s + 1) 2) s
 
-palindrome = todo
+palindrome :: String -> Bool
+palindrome s = if s == reverse s
+               then True
+               else False
 
 ------------------------------------------------------------------------------
 -- Ex 5: Implement a function capitalize that takes in a string and
@@ -95,8 +104,11 @@ palindrome = todo
 -- Example:
 --   capitalize "goodbye cruel world" ==> "Goodbye Cruel World"
 
+capitalizeWord :: String -> String
+capitalizeWord (x:xs) = toUpper x : xs
+
 capitalize :: String -> String
-capitalize = todo
+capitalize xs = unwords (map capitalizeWord (words xs))
 
 ------------------------------------------------------------------------------
 -- Ex 6: powers k max should return all the powers of k that are less
