@@ -127,8 +127,8 @@ longest xs = minimum [x | x <- xs, length x == maxLength]
 --   incrementKey True [(True,1),(False,3),(True,4)] ==> [(True,2),(False,3),(True,5)]
 --   incrementKey 'a' [('a',3.4)] ==> [('a',4.4)]
 
-incrementKey :: k -> [(k,v)] -> [(k,v)]
-incrementKey = todo
+incrementKey :: (Eq k, Num v) => k -> [(k,v)] -> [(k,v)]
+incrementKey k xs = [if x == k then (x, (y + 1)) else (x, y) | (x, y) <- xs]  
 
 ------------------------------------------------------------------------------
 -- Ex 7: compute the average of a list of values of the Fractional
@@ -143,7 +143,7 @@ incrementKey = todo
 -- length to a Fractional
 
 average :: Fractional a => [a] -> a
-average xs = todo
+average xs = sum xs / fromIntegral (length xs)
 
 ------------------------------------------------------------------------------
 -- Ex 8: given a map from player name to score and two players, return
@@ -162,7 +162,9 @@ average xs = todo
 --     ==> "Lisa"
 
 winner :: Map.Map String Int -> String -> String -> String
-winner scores player1 player2 = todo
+winner scores player1 player2 = if Map.findWithDefault 0 player1 scores >= Map.findWithDefault 0 player2 scores
+                                    then player1
+                                    else player2
 
 ------------------------------------------------------------------------------
 -- Ex 9: compute how many times each value in the list occurs. Return
@@ -177,7 +179,10 @@ winner scores player1 player2 = todo
 --     ==> Map.fromList [(False,3),(True,1)]
 
 freqs :: (Eq a, Ord a) => [a] -> Map.Map a Int
-freqs xs = todo
+freqs xs = foldr (Map.alter inc) Map.empty xs
+    where 
+        inc Nothing = Just 1
+        inc (Just x) = Just (x + 1)
 
 ------------------------------------------------------------------------------
 -- Ex 10: recall the withdraw example from the course material. Write a
@@ -205,7 +210,25 @@ freqs xs = todo
 --     ==> fromList [("Bob",100),("Mike",50)]
 
 transfer :: String -> String -> Int -> Map.Map String Int -> Map.Map String Int
-transfer from to amount bank = todo
+transfer from to amount bank =
+    
+    if Map.notMember from bank
+    then bank
+    else if Map.notMember to bank
+    then bank
+    else if amount < 0
+    then bank
+    else if fromOld < amount
+    then bank
+    else Map.insert to toNew (Map.insert from fromNew bank)
+    
+    where
+        toOld = Map.findWithDefault 0 to bank
+        fromOld = Map.findWithDefault 0 from bank
+        fromNew = fromOld - amount
+        toNew = toOld + amount
+
+
 
 ------------------------------------------------------------------------------
 -- Ex 11: given an Array and two indices, swap the elements in the indices.
@@ -215,7 +238,10 @@ transfer from to amount bank = todo
 --         ==> array (1,4) [(1,"one"),(2,"three"),(3,"two"),(4,"four")]
 
 swap :: Ix i => i -> i -> Array i a -> Array i a
-swap i j arr = todo
+swap i j arr = arr // [(i, other), (j, otherother)]
+    where
+        other = arr ! j
+        otherother = arr ! i
 
 ------------------------------------------------------------------------------
 -- Ex 12: given an Array, find the index of the largest element. You
@@ -226,4 +252,5 @@ swap i j arr = todo
 -- Hint: check out Data.Array.indices or Data.Array.assocs
 
 maxIndex :: (Ix i, Ord a) => Array i a -> i
-maxIndex = todo
+maxIndex arr = head [i | (i, value) <- assocs arr, value == maximum arr] 
+
