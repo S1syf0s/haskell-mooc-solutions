@@ -5,23 +5,25 @@ module Set4b where
 import Mooc.Todo
 
 ------------------------------------------------------------------------------
--- Ex 1: countNothings with a fold. The function countNothings from
--- the course material can be implemented using foldr. Your task is to
--- define countHelper so that the following definition of countNothings
+-- ex 1: countnothings with a fold. the function countnothings from
+-- the course material can be implemented using foldr. your task is to
+-- define counthelper so that the following definition of countnothings
 -- works.
 --
--- Hint: You can start by trying to add a type signature for countHelper.
+-- hint: you can start by trying to add a type signature for counthelper.
 --
--- Challenge: look up the maybe function and use it in countHelper.
+-- challenge: look up the maybe function and use it in counthelper.
 --
--- Examples:
---   countNothings []  ==>  0
---   countNothings [Just 1, Nothing, Just 3, Nothing]  ==>  2
+-- examples:
+--   countnothings []  ==>  0
+--   countnothings [just 1, nothing, just 3, nothing]  ==>  2
 
-countNothings :: [Maybe a] -> Int
-countNothings xs = foldr countHelper 0 xs
+countnothings :: [Maybe a] -> Int
+countnothings xs = foldr countHelper 0 xs
 
-countHelper = todo
+countHelper :: Maybe a -> Int -> Int
+countHelper (Just a) b = b
+countHelper Nothing b = b + 1
 
 ------------------------------------------------------------------------------
 -- Ex 2: myMaximum with a fold. Just like in the previous exercise,
@@ -35,7 +37,8 @@ myMaximum :: [Int] -> Int
 myMaximum [] = 0
 myMaximum (x:xs) = foldr maxHelper x xs
 
-maxHelper = todo
+maxHelper :: Int -> Int -> Int
+maxHelper x y = if x > y then x else y
 
 ------------------------------------------------------------------------------
 -- Ex 3: compute the sum and length of a list with a fold. Define
@@ -45,15 +48,18 @@ maxHelper = todo
 -- Start by giving slStart and slHelper types.
 --
 -- Examples:
---   sumAndLength []             ==>  (0.0,0)
---   sumAndLength [1.0,2.0,4.0]  ==>  (7.0,3)
+-- sumAndLength []             ==>  (0.0,0)
 
 
 sumAndLength :: [Double] -> (Double,Int)
+sumAndLength [] = (0.0,0)
 sumAndLength xs = foldr slHelper slStart xs
 
-slStart = todo
-slHelper = todo
+slStart :: (Double, Int)
+slStart = (0.0,0)
+
+slHelper :: Double -> (Double, Int) -> (Double, Int)
+slHelper x (a,b) = ((a + x), (b + 1)) 
 
 ------------------------------------------------------------------------------
 -- Ex 4: implement concat with a fold. Define concatHelper and
@@ -67,10 +73,14 @@ slHelper = todo
 myConcat :: [[a]] -> [a]
 myConcat xs = foldr concatHelper concatStart xs
 
-concatStart = todo
-concatHelper = todo
 
-------------------------------------------------------------------------------
+concatStart :: [a]
+concatStart = []
+
+concatHelper :: [a] -> [a] -> [a]
+concatHelper xs ys = xs ++ ys
+
+-----------------------------------------------------------------------------
 -- Ex 5: get all occurrences of the largest number in a list with a
 -- fold. Implement largestHelper so that the given definition of largest works.
 --
@@ -82,7 +92,16 @@ concatHelper = todo
 largest :: [Int] -> [Int]
 largest xs = foldr largestHelper [] xs
 
-largestHelper = todo
+largestHelper :: Int -> [Int] -> [Int]
+largestHelper x [] = [x]
+largestHelper x xs = 
+    
+    if head xs < x 
+    then [x] 
+    else if head xs == x
+    then x : xs
+    else xs
+     
 
 
 ------------------------------------------------------------------------------
@@ -92,13 +111,14 @@ largestHelper = todo
 -- Start by giving headHelper a type.
 --
 -- Examples:
---   myHead []  ==>  Nothing
---   myHead [1,2,3]  ==>  Just 1
+--   myhead []  ==>  nothing
+--   myhead [1,2,3]  ==>  just 1
 
-myHead :: [a] -> Maybe a
-myHead xs = foldr headHelper Nothing xs
+myhead :: [a] -> Maybe a
+myhead xs = foldr headHelper Nothing xs
 
-headHelper = todo
+headHelper :: a -> Maybe a -> Maybe a
+headHelper x _ = Just x
 
 ------------------------------------------------------------------------------
 -- Ex 7: get the last element of a list with a fold. Define lasthelper
@@ -113,5 +133,11 @@ headHelper = todo
 myLast :: [a] -> Maybe a
 myLast xs = foldr lastHelper Nothing xs
 
-lastHelper = todo
+lastHelper :: a -> Maybe a -> Maybe a
+lastHelper a Nothing = Just a
+lastHelper _ (Just b) = Just b
+
+
+
+
 
