@@ -29,7 +29,6 @@ valAtRoot (Node a _ _) = (Just a)
 treeSize :: Tree a -> Int
 treeSize Empty = 0
 treeSize (Node _ b c) = 1 + treeSize b + treeSize c
-    
 
 ------------------------------------------------------------------------------
 -- Ex 3: get the largest value in a tree of positive Ints. The
